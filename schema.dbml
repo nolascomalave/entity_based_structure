@@ -1,0 +1,162 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Enum gender {
+  Male
+  Female
+}
+
+Table entity {
+  id uuidv7 [pk, unique, not null]
+  fusion_master_entity_id uuidv7 [ref: > entity.id]
+  is_natural boolean [not null, default: false]
+  identity_document varchar(250)
+  name varchar(250) [null]
+  created_at timestampz [not null, default: "now()"]
+  created_by uuidv7 [not null]
+  updated_at timestampz [not null, default: "now()"]
+  updated_by uuidv7 [not null]
+  fusioned_at timestampz
+  fusioned_by uuidv7
+  inactivated_at timestampz
+  inactivated_by uuidv7
+  annulled_at timestampz
+  annulled_by uuidv7
+
+  Indexes {
+    (fusion_master_entity_id) [name: "idx_fusion_master_entity"]
+    (created_by) [name: "idx_created_by"]
+    (updated_by) [name: "idx_updated_by"]
+    (fusioned_by) [name: "idx_fusioned_by"]
+    (inactivated_by) [name: "idx_inactivated_by"]
+    (annulled_by) [name: "idx_annulled_by"]
+  }
+}
+
+Table natural_entity {
+  entity_id uuidv7 [unique, not null, ref: - entity.id]
+  gender gender [not null]
+  birth_date date
+  created_at timestampz [not null, default: "now()"]
+  created_by uuidv7 [not null]
+  updated_at timestampz [not null, default: "now()"]
+  updated_by uuidv7 [not null]
+  inactivated_at timestampz
+  inactivated_by uuidv7
+  annulled_at timestampz
+  annulled_by uuidv7
+
+  Indexes {
+    (entity_id) [name: "idx_entity"]
+    (created_by) [name: "idx_created_by"]
+    (updated_by) [name: "idx_updated_by"]
+    (inactivated_by) [name: "idx_inactivated_by"]
+    (annulled_by) [name: "idx_annulled_by"]
+  }
+}
+
+Table identity_document_category {
+  id uuidv7 [pk, unique, not null]
+  parent_id uuidv7 [not null, ref: > identity_document_category.id]
+  region_id int
+  subregion_id int
+  country_id int
+  state_id int
+  city_id int
+  category varchar(250) [not null]
+  symbol varchar(50)
+  abbreviation varchar(50)
+  created_at timestampz [not null, default: "now()"]
+  created_by uuidv7 [not null]
+  updated_at timestampz [not null, default: "now()"]
+  updated_by uuidv7 [not null]
+  inactivated_at timestampz
+  inactivated_by uuidv7
+  annulled_at timestampz
+  annulled_by uuidv7
+
+  Indexes {
+    (parent_id, region_id, subregion_id, country_id, state_id, city_id) [pk, unique, name: "identity_document_category_idx_unique"]
+    (parent_id) [name: "identity_document_category_idx_parent_identity_document_category"]
+    (region_id) [name: "identity_document_category_idx_region"]
+    (subregion_id) [name: "identity_document_category_idx_subregion"]
+    (country_id) [name: "identity_document_category_idx_country"]
+    (state_id) [name: "identity_document_category_idx_state"]
+    (city_id) [name: "identity_document_category_idx_city"]
+    (created_by) [name: "identity_document_category_idx_created_by"]
+    (updated_by) [name: "identity_document_category_idx_updated_by"]
+    (inactivated_by) [name: "identity_document_category_idx_inactivated_by"]
+    (annulled_by) [name: "identity_document_category_idx_annulled_by"]
+  }
+}
+
+Table identity_document {
+  id uuidv7
+  identity_document_category_id uuidv7 [not null, ref: > identity_document_category.id]
+  document varchar(250) [not null]
+  created_at timestampz [not null, default: "now()"]
+  created_by uuidv7 [not null]
+  updated_at timestampz [not null, default: "now()"]
+  updated_by uuidv7 [not null]
+  inactivated_at timestampz
+  inactivated_by uuidv7
+  annulled_at timestampz
+  annulled_by uuidv7
+
+  Indexes {
+    (identity_document_category_id, document) [pk, unique, name: "identity_document_idx_unique"]
+    (identity_document_category_id) [name: "identity_document_idx_parent_identity_document_category"]
+    (created_by) [name: "identity_document_idx_created_by"]
+    (updated_by) [name: "identity_document_idx_updated_by"]
+    (inactivated_by) [name: "identity_document_idx_inactivated_by"]
+    (annulled_by) [name: "identity_document_idx_annulled_by"]
+  }
+}
+
+Table identity_document_by_entity {
+  entity_id uuidv7 [not null, ref: > entity.id]
+  identity_document_id uuidv7 [not null, ref: > identity_document.id]
+  ordering int [not null, default: 1]
+  created_at timestampz [not null, default: "now()"]
+  created_by uuidv7 [not null]
+  updated_at timestampz [not null, default: "now()"]
+  updated_by uuidv7 [not null]
+  inactivated_at timestampz
+  inactivated_by uuidv7
+  annulled_at timestampz
+  annulled_by uuidv7
+
+  Indexes {
+    (entity_id, identity_document_id) [pk, unique, name: "identity_document_by_entity_idx_unique"]
+    (entity_id) [name: "identity_document_by_entity_idx_entity"]
+    (identity_document_id) [name: "identity_document_by_entity_idx_identity_document"]
+    (created_by) [name: "identity_document_by_entity_idx_created_by"]
+    (updated_by) [name: "identity_document_by_entity_idx_updated_by"]
+    (inactivated_by) [name: "identity_document_by_entity_idx_inactivated_by"]
+    (annulled_by) [name: "identity_document_by_entity_idx_annulled_by"]
+  }
+}
+
+
+
+// address
+// photo
+
+
+/* Records users(id, username, role) {
+  0, 'Alice', 'admin'
+  1, 'Bob', 'moderator'
+  2, 'Candice', 'moderator'
+  3, 'David', 'member'
+}
+
+Records follows(following_user_id, followed_user_id, created_at) {
+  1, 0, '2026-01-01'
+  3, 2, '2026-02-28'
+}
+
+Records posts(id, title, user_id) {
+  0, 'Welcome to the forum!', 0
+  1, 'Guidelines', 1
+  2, 'Hello all!', 3
+} */
