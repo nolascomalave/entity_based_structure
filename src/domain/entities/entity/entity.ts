@@ -1,4 +1,4 @@
-import { UUID } from "../../value-objects/uuid";
+import { UUID } from "../../shared/value-objects/uuid";
 
 export interface EntityProps {
     // id: UUID;
