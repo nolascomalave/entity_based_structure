@@ -1,6 +1,6 @@
 import { Entity } from "../../../../domain/entities/entity/entity";
 import { EntityRepository } from "../ports/entity.repository";
-import { UUID } from "../../../../domain/value-objects/uuid";
+import { UUID } from "../../../../domain/shared/value-objects/uuid";
 
 export interface RegisterEntityInput {
     system_subscription_id: string;
