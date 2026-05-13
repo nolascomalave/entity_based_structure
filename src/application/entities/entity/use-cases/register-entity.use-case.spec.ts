@@ -1,6 +1,7 @@
 import { Entity } from "../../../../domain/entities/entity/entity";
 import { RegisterEntityUseCase } from "./register-entity.use-case";
 import { EntityRepository } from "../ports/entity.repository";
+import { InvalidValueError } from "../../../../domain/shared/errors/invalid-value.error";
 
 describe("RegisterEntityUseCase", () => {
     let useCase: RegisterEntityUseCase,
@@ -42,6 +43,17 @@ describe("RegisterEntityUseCase", () => {
         };
 
         await expect(useCase.execute(input)).rejects.toThrow('The name of this entity is required.');
+        expect(mockRepo.save).not.toHaveBeenCalled();
+    });
+
+    it('should throw if system_subscription_id is an invalid UUID', async () => {
+        const input = {
+        system_subscription_id: "crypto.randomUUID()",
+          is_natural: false,
+          name: 'Acme Corp',
+        };
+
+        await expect(useCase.execute(input)).rejects.toBeInstanceOf(InvalidValueError);
         expect(mockRepo.save).not.toHaveBeenCalled();
     });
 });
