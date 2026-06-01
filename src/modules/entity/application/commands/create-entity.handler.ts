@@ -1,14 +1,14 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { Entity } from '../../domain/entities/entity.entity';
-import { EntityRepository } from '../../domain/repositories/entity.repository';
+import { EntityPort } from '../../domain/ports/entity.port';
 import { CreateEntityCommand } from './create-entity.command';
 
 @CommandHandler(CreateEntityCommand)
 export class CreateEntityHandler implements ICommandHandler<CreateEntityCommand> {
   constructor(
-    @Inject('EntityRepository')
-    private readonly entityRepository: EntityRepository,
+    @Inject('EntityPort')
+    private readonly entityRepository: EntityPort,
   ) {}
 
   async execute(command: CreateEntityCommand): Promise<Entity> {

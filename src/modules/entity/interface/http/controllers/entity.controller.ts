@@ -1,14 +1,19 @@
-import { Controller, Get, HttpCode, HttpStatus, Post, Response } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreateEntityCommand } from 'src/modules/entity/application/commands/create-entity.command';
+import { ListEntityQuery } from 'src/modules/entity/application/queries/list-entity.query';
+import { Entity } from 'src/modules/entity/domain/entities/entity.entity';
 
 @Controller('entity')
 export class EntityController {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus
+  ) {}
 
   @Get()
-  getHello(): string {
-    return "Hello, Nolasco!";
+  async list(): Promise<Entity> {
+    return await this.queryBus.execute(new ListEntityQuery());
   }
 
   @Post('create')
